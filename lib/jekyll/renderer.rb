@@ -35,7 +35,13 @@ module Jekyll
     #
     # Returns Array of Converter instances.
     def converters
-      @converters ||= site.converters.select { |c| c.matches(document.extname) }.sort
+      @converters ||= site.converters.select { |c| 
+        if c.class.method_defined?(:matches_path)
+          c.matches_path(document.path) 
+        else
+          c.matches(document.extname) 
+        end
+      }.sort
     end
 
     # Determine the extname the outputted file should have
