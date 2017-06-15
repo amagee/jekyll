@@ -101,7 +101,11 @@ module Jekyll
     def convert(content)
       converters.reduce(content) do |output, converter|
         begin
-          converter.convert output
+          if converter.class.method_defined?(:convert_document)
+            converter.convert_document(output, document)
+          else
+            converter.convert output
+          end
         rescue => e
           Jekyll.logger.error "Conversion error:",
             "#{converter.class} encountered an error while "\
